@@ -1,2 +1,6 @@
 tasks-backend/
+tasks-frontend/
+jenkins/
+apache-maven/
+apache-tomcat/
 README.md

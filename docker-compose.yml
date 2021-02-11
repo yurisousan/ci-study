@@ -8,3 +8,11 @@ services:
     environment:
       - POSTGRES_DB=tasks
       - POSTGRES_PASSWORD=password
+  jenkins:
+    container_name: jenkins-tasks
+    privileged: true
+    user: root
+    image: jenkins/jenkins:2.204.4
+    ports:
+      - 8083:8080
+      - 50000:50000
