@@ -3,4 +3,5 @@ tasks-frontend/
 jenkins/
 apache-maven/
 apache-tomcat/
+data/
 README.md

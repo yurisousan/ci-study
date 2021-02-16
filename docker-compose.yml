@@ -1,21 +1,46 @@
-version: "3"
+version: "3.7"
 services:
+## TOMCAT
+  tomcat:
+    container_name: tomcat
+    build: ./tomcat
+    volumes:
+      - ./tomcat/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml
+#      - ./tomcat/context.xml:/usr/local/tomcat/webapps/HelpdeskApp/META-INF/context.xml
+#      - ./tomcat/context.xml:/usr/local/tomcat/webapps/host-manager/META-INF/context.xml
+#      - ./tomcat/context.xml:/usr/local/tomcat/webapps/manager/META-INF/context.xml
+    ports:
+      - 8001:8080
+    links:
+      - pg-tasks
+    depends_on:
+      - pg-tasks
+
+## POSTGRESS PARA O TOMCAT
   pg-tasks:
     container_name: pg-tasks
     image: postgres:9.6
     ports:
       - 5433:5432
+    expose:
+      - 5432
     environment:
       - POSTGRES_DB=tasks
       - POSTGRES_PASSWORD=password
+
+## JENKINS PARA DEPLOY
   jenkins:
     container_name: jenkins-tasks
     privileged: true
     user: root
     image: jenkins/jenkins:2.204.4
     ports:
-      - 8083:8080
+      - 8080:8080
       - 50000:50000
+    volumes:
+      - ./data/jenkins/jenkins_home:/var/jenkins_home
+
+## SONARQUBE PARA OS TESTES
   sonarqube:
     container_name: sonar
     image: sonarqube:7.7-community
@@ -33,6 +58,7 @@ services:
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
 
+## POSTGRESS PARA O SONARQUBE
   pg-sonar:
     container_name: pg-sonar
     image: postgres:9.6
@@ -45,9 +71,11 @@ services:
       - postgresql:/var/lib/postgresql
       - postgresql_data:/var/lib/postgresql/data
 
+## REDES DE COMUNICAÇÃO DOS CONTAINERS
 networks:
   sonarnet:
 
+## VOLUMES
 volumes:
   sonarqube_conf:
   sonarqube_data:
@@ -55,3 +83,5 @@ volumes:
   sonarqube_bundled-plugins:
   postgresql:
   postgresql_data:
+#  jenkins-data:
+#  jenkins-log:
